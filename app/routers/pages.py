@@ -1,0 +1,63 @@
+from typing import Annotated
+
+from fastapi import APIRouter, File, HTTPException, Request, UploadFile, status
+from fastapi.responses import JSONResponse
+from fastapi.templating import Jinja2Templates
+
+from app.avatar import delete_avatar, save_avatar
+from app.dependencies import OptionalUserDep, RequiredUserDep, SessionDep, UserUpdateDep
+from app.models import EducationType, Faculty, User
+
+router = APIRouter()
+
+templates = Jinja2Templates("templates")
+
+templates.env.globals["EducationType"] = EducationType
+templates.env.globals["Faculty"] = Faculty
+
+
+@router.get("/")
+def index(
+    request: Request,
+    user: OptionalUserDep,
+):
+    return templates.TemplateResponse(request, "index.html", context={"user": user})
+
+
+@router.get("/profile")
+def profile(
+    request: Request,
+    user: RequiredUserDep,
+):
+    return templates.TemplateResponse(request, "profile.html", context={"user": user})
+
+
+@router.get("/profile/edit")
+def profile_edit_page(
+    request: Request,
+    user: RequiredUserDep,
+):
+    return templates.TemplateResponse(request, "profile_edit.html", context={"user": user})
+
+
+@router.post("/profile/edit")
+def profile_edit(
+    user: RequiredUserDep,
+    session: SessionDep,
+    form: UserUpdateDep,
+    photo: Annotated[UploadFile | None, File()] = None,
+):
+    db_user = session.get(User, user.id)
+    if db_user is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+
+    db_user.sqlmodel_update(form.model_dump())
+
+    if photo and photo.filename:
+        delete_avatar(db_user.photo_url)
+        db_user.photo_url = save_avatar(photo)
+
+    session.add(db_user)
+    session.commit()
+
+    return JSONResponse({"redirect": "/profile"})

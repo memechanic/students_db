@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block header %}
+{% endblock header %}
+{% block footer %}
+{% endblock footer %}
+{% block content %}
+    <div class="container flex-grow-1 d-flex">
+        <div class="row w-100 justify-content-center align-items-center">
+            <div class="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4">
+                <div class="p-4 shadow rounded bg-body">
+                    <h2 class="h2 text-center mb-4">Регистрация</h2>
+                    <form action="{{ url_for('register') }}"
+                          method="post"
+                          data-auth-form="register">
+                        <div class="mb-3">
+                            <input class="form-control"
+                                   type="text"
+                                   name="username"
+                                   placeholder="Имя пользователя"
+                                   required>
+                            <span class="invalid-feedback px-1" data-error-field="username"></span>
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group mb-1">
+                                <input id="password-input"
+                                       class="form-control"
+                                       type="password"
+                                       name="password"
+                                       placeholder="Пароль"
+                                       required>
+                                <button data-input="password-input" class="btn eye-btn" type="button">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                            <ul id="password-rules" class="list-unstyled small mx-1">
+                                <li data-rule="length" class="text-body-secondary">
+                                    <i class="bi bi-record"></i>
+                                    Минимум 8 символов
+                                </li>
+                                <li data-rule="uppercase" class="text-body-secondary">
+                                    <i class="bi bi-record"></i>
+                                    Заглавная буква
+                                </li>
+                                <li data-rule="lowercase" class="text-body-secondary">
+                                    <i class="bi bi-record"></i>
+                                    Строчная буква
+                                </li>
+                                <li data-rule="digit" class="text-body-secondary">
+                                    <i class="bi bi-record"></i>
+                                    Цифра
+                                </li>
+                                <li data-rule="special" class="text-body-secondary">
+                                    <i class="bi bi-record"></i>
+                                    Спецсимвол (!@#$%^&*)
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <input id="repeat-password-input"
+                                       class="form-control"
+                                       type="password"
+                                       name="repeat_password"
+                                       placeholder="Повторите пароль">
+                                <button data-input="repeat-password-input" class="btn eye-btn" type="button">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                            <span class="invalid-feedback px-1 d-block"
+                                  data-error-field="repeat_password"></span>
+                        </div>
+                        <div class="d-grid gap-2 mb-3">
+                            <button class="btn btn-primary" type="submit">Регистрация</button>
+                        </div>
+                        <div class="text-center mb-3">
+                            <a href="{{ url_for('login_page') }}">Уже есть аккаунт? Войти</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

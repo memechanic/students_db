@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Редактирование профиля{% endblock title %}
+{% block content %}
+    <div class="container bg-body p-4">
+        <div class="row justify-content-center">
+            <div class="col-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h4 mb-0">Редактирование профиля</h1>
+                    <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> К профилю
+                    </a>
+                </div>
+                <form action="{{ url_for('profile_edit') }}"
+                      method="post"
+                      enctype="multipart/form-data"
+                      data-profile-form>
+                    <div class="mb-4 text-center">
+                        <img src="{{ user.photo_url or url_for('static', path='/default_icon.png') }}"
+                             alt="Фото профиля"
+                             class="profile-image rounded-circle border border-2 border-secondary-subtle mb-3">
+                        <input type="file"
+                               name="photo"
+                               accept="image/*"
+                               class="form-control mx-auto">
+                        <div class="form-text">Максимум 5 MB</div>
+                    </div>
+                    <h2 class="h6 text-uppercase text-body-secondary mb-3">Личная информация</h2>
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <label class="form-label" for="full_name">ФИО</label>
+                            <input class="form-control"
+                                   type="text"
+                                   id="full_name"
+                                   name="full_name"
+                                   maxlength="100"
+                                   value="{{ user.full_name or '' }}">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="phone_number">Телефон</label>
+                            <input class="form-control"
+                                   type="tel"
+                                   id="phone_number"
+                                   name="phone_number"
+                                   maxlength="20"
+                                   value="{{ user.phone_number or '' }}">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="email">Электронная почта</label>
+                            <input class="form-control"
+                                   type="email"
+                                   id="email"
+                                   name="email"
+                                   maxlength="100"
+                                   value="{{ user.email or '' }}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="bio">О себе</label>
+                            <textarea class="form-control"
+                                      id="bio"
+                                      name="bio"
+                                      rows="3"
+                                      maxlength="500">{{ user.bio or '' }}</textarea>
+                        </div>
+                    </div>
+                    <h2 class="h6 text-uppercase text-body-secondary mb-3">Обучение</h2>
+                    <div class="row g-3 mb-4">
+                        <div class="col-4">
+                            <label class="form-label" for="education_type">Тип обучения</label>
+                            <select class="form-select" id="education_type" name="education_type">
+                                <option value="">— не выбрано —</option>
+                                {% for et in EducationType %}
+                                    <option value="{{ et.value }}"
+                                            {% if user.education_type == et %}selected{% endif %}>
+                                        {{ et.value }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label" for="course">Курс</label>
+                            <input class="form-control"
+                                   type="number"
+                                   id="course"
+                                   name="course"
+                                   min="1"
+                                   max="6"
+                                   value="{{ user.course or '' }}">
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label" for="faculty">Факультет</label>
+                            <select class="form-select" id="faculty" name="faculty">
+                                <option value="">— не выбрано —</option>
+                                {% for f in Faculty %}
+                                    <option value="{{ f.value }}"
+                                            {% if user.faculty == f %}selected{% endif %}>{{ f.value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="submit">Сохранить</button>
+                        <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

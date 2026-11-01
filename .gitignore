@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments and tooling caches
+.venv/
+venv/
+env/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+
+# Local configuration and data
+.env
+*.db
+media/avatars/*
+
+# IDE and OS files
+.idea/
+*.swp
+Thumbs.db
+.DS_Store
+
+# Local md files except README file
+*.md
+!README.md

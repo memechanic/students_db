@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block header %}
+{% endblock header %}
+{% block footer %}
+{% endblock footer %}
+{% block content %}
+    <div class="container flex-grow-1 d-flex">
+        <div class="row w-100 justify-content-center align-items-center">
+            <div class="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4">
+                <div class="p-4 shadow rounded bg-body">
+                    <h2 class="h2 text-center mb-4 mt-2">Авторизация</h2>
+                    <form action="{{ url_for('login') }}" method="post" data-auth-form="login">
+                        <div class="mb-3">
+                            <input class="form-control"
+                                   type="text"
+                                   name="username"
+                                   placeholder="Имя пользователя"
+                                   required>
+                            <span class="invalid-feedback" data-error-field="username"></span>
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <input id="login-password-input"
+                                       class="form-control"
+                                       type="password"
+                                       name="password"
+                                       placeholder="Пароль"
+                                       required>
+                                <button data-input="login-password-input" class="btn eye-btn" type="button">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-check mb-3 mx-2">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="remember_me"
+                                   id="checkRememberMe">
+                            <label class="form-check-label" for="checkRememberMe">Запомнить меня</label>
+                        </div>
+                        <div class="d-grid gap-2 mb-3">
+                            <button class="btn btn-primary" type="submit">Вход</button>
+                        </div>
+                        <div class="text-center mb-2">
+                            <a href="{{ url_for('register_page') }}">Зарегистрироваться</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

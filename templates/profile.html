@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Профиль{% endblock title %}
+{% block content %}
+    <div class="container bg-body p-4">
+        <div class="row">
+            <div class="col-3 text-center">
+                <img src="{{ user.photo_url or url_for('static', path='/default_icon.png') }}"
+                     alt="Фото профиля"
+                     class="profile-image rounded-circle border border-2 border-secondary-subtle mb-3">
+                <h3 class="h4 mb-1">{{ user.full_name or user.username }}</h3>
+                <p class="text-body-secondary mb-3">@{{ user.username }}</p>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('profile_edit_page') }}"
+                       class="btn btn-outline-primary">Редактировать профиль</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Выйти</a>
+                </div>
+            </div>
+            <div class="col-9">
+                <h3 class="h5">О себе</h3>
+                <p class="text-body-secondary">{{ user.bio or "Нет данных." }}</p>
+                <hr class="my-4">
+                <div class="row g-4">
+                    <div class="col-6">
+                        <h4 class="h6 text-uppercase text-body-secondary mb-3">Личная информация</h4>
+                        <dl class="row mb-0">
+                            <dt class="col-5">ФИО</dt>
+                            <dd class="col-7">
+                                {{ user.full_name or "—" }}
+                            </dd>
+                            <dt class="col-5">Электронная почта</dt>
+                            <dd class="col-7">
+                                {{ user.email or "—" }}
+                            </dd>
+                            <dt class="col-5">Телефон</dt>
+                            <dd class="col-7">
+                                {{ user.phone_number or "—" }}
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="h6 text-uppercase text-body-secondary mb-3">Обучение</h4>
+                        <dl class="row mb-0">
+                            <dt class="col-5">Тип обучения</dt>
+                            <dd class="col-7">
+                                {{ user.education_type or "—" }}
+                            </dd>
+                            <dt class="col-5">Курс</dt>
+                            <dd class="col-7">
+                                {{ user.course or "—" }}
+                            </dd>
+                            <dt class="col-5">Факультет</dt>
+                            <dd class="col-7">
+                                {{ user.faculty or "—" }}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

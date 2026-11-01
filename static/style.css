@@ -1,0 +1,16 @@
+.eye-btn {
+    border-color: var(--bs-border-color);
+    border-left: none;
+}
+
+.eye-btn:hover {
+    border-color: var(--bs-secondary-color);
+}
+
+.profile-image {
+    --box-size: 200px;
+    width: var(--box-size);
+    height: var(--box-size);
+
+    object-fit: cover;
+}
