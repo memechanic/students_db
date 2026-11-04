@@ -42,13 +42,13 @@ RequiredUserDep = Annotated[UserRead, Depends(get_required_user)]
 
 
 def get_user_update(
-    full_name: Annotated[str | None, Form()] = None,
-    email: Annotated[str | None, Form()] = None,
-    phone_number: Annotated[str | None, Form()] = None,
+    full_name: Annotated[str, Form()],
+    email: Annotated[str, Form()],
+    phone_number: Annotated[str, Form()],
+    course: Annotated[int, Form()],
+    faculty: Annotated[Faculty, Form()],
+    education_type: Annotated[EducationType, Form()],
     bio: Annotated[str | None, Form()] = None,
-    course: Annotated[int | None, Form()] = None,
-    faculty: Annotated[Faculty | None, Form()] = None,
-    education_type: Annotated[EducationType | None, Form()] = None,
 ) -> UserUpdate:
     return UserUpdate(
         full_name=full_name,

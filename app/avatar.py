@@ -3,7 +3,7 @@ from io import BytesIO
 from pathlib import Path
 
 from fastapi import HTTPException, UploadFile, status
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ImageOps, UnidentifiedImageError
 
 MEDIA_DIR = Path("media")
 AVATARS_DIR = MEDIA_DIR / "avatars"
@@ -30,7 +30,7 @@ def save_avatar(file: UploadFile) -> str:
             detail="Неподдерживаемый формат файла",
         )
 
-    image = image.resize(AVATAR_SIZE)
+    image = ImageOps.fit(image, AVATAR_SIZE, method=Image.Resampling.LANCZOS)
     name = f"{uuid.uuid4().hex}.png"
     image.save(AVATARS_DIR / name, "PNG")
 

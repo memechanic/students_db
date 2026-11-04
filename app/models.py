@@ -52,14 +52,14 @@ class UserCreate(SQLModel):
 
 
 class UserUpdate(SQLModel):
-    full_name: str | None = Field(default=None, max_length=100)
-    email: str | None = Field(default=None, max_length=100)
-    phone_number: str | None = Field(default=None, max_length=20)
+    full_name: str = Field(max_length=100)
+    email: str = Field(max_length=100)
+    phone_number: str = Field(max_length=20)
     bio: str | None = Field(default=None, max_length=500)
 
-    course: int | None = Field(default=None, ge=1, le=6)
-    faculty: Faculty | None = Field(default=None)
-    education_type: EducationType | None = Field(default=None)
+    course: int = Field(ge=1, le=6)
+    faculty: Faculty
+    education_type: EducationType
 
 
 class UserLogin(SQLModel):

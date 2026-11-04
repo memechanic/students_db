@@ -73,8 +73,10 @@ function checkPassword(form, showFailures) {
         item.querySelector("i").className = `bi ${RULE_STYLES[state].icon}`;
     });
     const result = Object.values(PASSWORD_RULES).every(test => test(value));
-
-    setFeedback(form, "password", "", result)
+    if (showFailures && value !== "")
+        setFeedback(form, "password", "", result);
+    else
+        resetFeedback(form, "password");
     return result
 }
 
@@ -189,9 +191,65 @@ document.querySelectorAll("[data-auth-form]").forEach(form => {
 
 // Редактирование профиля
 
+const EDIT_PROFILE_RULES = {
+    full_name: {
+        test: (v) => /^[a-zA-Zа-яА-ЯёЁ]+([ '-][a-zA-Zа-яА-ЯёЁ]+)*$/.test(v),
+        message: "Недопустимые символы в имени",
+    },
+    email: {
+        test: (v) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v),
+        message: "Неверный формат почты. Проверьте, пожалуйста, адрес",
+    },
+    phone_number: {
+        test: (v) => /^(\+7|8)\d{10}$/.test(v),
+        message: "Неверный формат номера телефона. Проверьте, пожалуйста, номер: (+7|8)XXXXXXXXXX",
+    },
+}
+
+function checkField(form, field, showFailures = false) {
+    const value = form.elements.namedItem(field).value;
+
+    if (value === "") {
+        resetFeedback(form, field);
+        return true;
+    }
+
+    const valid = EDIT_PROFILE_RULES[field].test(value);
+    const message = valid ? "" : EDIT_PROFILE_RULES[field].message;
+
+    if (showFailures || !valid) {
+        setFeedback(form, field, message, valid);
+    } else {
+        resetFeedback(form, field);
+    }
+    return valid;
+}
+
+
+
 async function setupProfileForm(form) {
+    const errorAlert = document.getElementById("error_alert");
+    const deleteAvatar = form.elements.namedItem("delete_icon");
+    const photoInput = form.elements.namedItem("photo");
+
+    deleteAvatar.addEventListener("change", () => {
+        photoInput.disabled = deleteAvatar.checked;
+    });
+
+    const fields = ["full_name", "email", "phone_number"];
+
+    fields.forEach(name => {
+        const el = form.elements.namedItem(name);
+        el.addEventListener("blur", () => checkField(form, name, true));
+        el.addEventListener("input", () => resetFeedback(form, name));
+    });
+
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
+        clearFeedback(form);
+
+        const fail = fields.map(name => checkField(form, name, true)).includes(false);
+        if (fail) return;
 
         try {
             const response = await fetch(form.action, {
@@ -202,13 +260,18 @@ async function setupProfileForm(form) {
             const data = await response.json().catch(() => ({}));
 
             if (!response.ok) {
-                alert(JSON.stringify(data) || "Не удалось сохранить");
+                if ([413, 415].includes(response.status)) {
+                    setFeedback(form, "photo", data["detail"]);
+                }
+                errorAlert.classList.remove("d-none");
+                errorAlert.querySelector("#message").textContent = data["detail"] || "Что-то пошло не так, попробуйте еще раз";
                 return;
             }
 
             window.location.assign(data.redirect);
         } catch {
-            alert("Не удалось выполнить запрос");
+            errorAlert.classList.remove("d-none");
+            errorAlert.querySelector("#message").textContent = "Не удалось выполнить запрос";
         }
     });
 }
