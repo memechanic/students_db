@@ -1,12 +1,13 @@
 from typing import Annotated
 
-from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile, status
+from fastapi import APIRouter, File, Form, HTTPException, Query, Request, UploadFile, status
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
+from sqlmodel import select
 
 from app.avatar import delete_avatar, save_avatar
 from app.dependencies import OptionalUserDep, RequiredUserDep, SessionDep, UserUpdateDep
-from app.models import EducationType, Faculty, User
+from app.models import EducationType, Faculty, User, UserFilter
 
 router = APIRouter()
 
@@ -20,8 +21,23 @@ templates.env.globals["Faculty"] = Faculty
 def index(
     request: Request,
     user: OptionalUserDep,
+    session: SessionDep,
+    filter_query: Annotated[UserFilter, Query()],
 ):
-    return templates.TemplateResponse(request, "index.html", context={"user": user})
+    filters = filter_query.model_dump(exclude_none=True)
+
+    conditions = [User.is_hidden == False]
+
+    for field, value in filters.items():
+        column = getattr(User, field)
+        if isinstance(value, str) and field not in ["faculty", "education_type"]:
+            conditions.append(column.ilike(f"%{value}%"))
+        else:
+            conditions.append(column == value)
+
+    users = session.exec(select(User).where(*conditions)).all()
+
+    return templates.TemplateResponse(request, "index.html", context={"user": user, "users": users})
 
 
 @router.get("/profile")

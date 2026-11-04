@@ -35,8 +35,26 @@
                         {% endif %}
                         <div class="col-3 gx-1 text-end">
                             {% if user %}
-                                <a class="btn btn-primary" href="{{ url_for('profile') }}">Профиль</a>
-                                <a class="btn btn-outline-primary" href="{{ url_for('logout') }}">Выйти</a>
+                                <div class="dropdown text-end">
+                                    <a href=""
+                                       class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                                       data-bs-toggle="dropdown"
+                                       aria-expanded="false">
+                                        <span>{{ user.username }}</span>
+                                        <img src="{{ user.photo_url or url_for('static', path='default_icon.png') }}"
+                                             alt="profile icon"
+                                             width="32"
+                                             height="32"
+                                             class="rounded-circle">
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end text-small mt-1">
+                                        <li><a class="dropdown-item" href="{{ url_for('profile') }}">Профиль</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item" href="{{ url_for('logout') }}">Выход</a></li>
+                                    </ul>
+                                </div>
                             {% else %}
                                 <a class="btn btn-primary" href="{{ url_for('login_page') }}">Войти</a>
                                 <a class="btn btn-outline-primary" href="{{ url_for('register_page') }}">Регистрация</a>

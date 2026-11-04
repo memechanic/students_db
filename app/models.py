@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import SecretStr
+from pydantic import BaseModel, SecretStr, field_validator
 from sqlmodel import Field, SQLModel
 
 
@@ -60,6 +60,36 @@ class UserUpdate(SQLModel):
     course: int = Field(ge=1, le=6)
     faculty: Faculty
     education_type: EducationType
+
+
+user_filter_fields = [
+    "username",
+    "full_name",
+    "email",
+    "phone_number",
+    "course",
+    "faculty",
+    "education_type",
+]
+
+
+class UserFilter(BaseModel):
+    model_config = {"extra": "forbid"}
+
+    username: str | None = None
+
+    full_name: str | None = None
+    email: str | None = None
+    phone_number: str | None = None
+
+    course: int | None = None
+    faculty: Faculty | None = None
+    education_type: EducationType | None = None
+
+    @field_validator(*user_filter_fields, mode="before")
+    @classmethod
+    def validate_course(cls, value):
+        return value if value != "" else None
 
 
 class UserLogin(SQLModel):
