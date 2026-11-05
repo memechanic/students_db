@@ -36,6 +36,8 @@ class UserBase(SQLModel):
     faculty: Faculty | None = Field(default=None)
     education_type: EducationType | None = Field(default=None)
 
+    rating: int = Field(default=0, ge=0)
+
     photo_url: str | None = Field(default=None, max_length=500)
     is_hidden: bool = Field(default=False)
 

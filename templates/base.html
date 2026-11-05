@@ -26,8 +26,12 @@
                             <div class="col-auto">
                                 <ul class="nav nav-pills gap-1">
                                     <li class="nav-item">
-                                        <a class="nav-link {% if request.url.path == '/hidden' %}active{% endif %}"
+                                        <a class="nav-link {% if request.url.path == '/admin/hidden' %}active{% endif %}"
                                            href="{{ url_for('hidden_page') }}">Полный каталог</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link {% if request.url.path == '/admin/rating' %}active{% endif %}"
+                                           href="{{ url_for('rating_page') }}">Рейтинг пользователей</a>
                                     </li>
                                 </ul>
                             </div>

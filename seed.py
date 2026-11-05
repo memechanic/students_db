@@ -1,3 +1,5 @@
+import random
+
 from sqlmodel import Session
 
 from app.database import engine, init_db
@@ -136,6 +138,7 @@ USERS = [
 
 def main() -> None:
     init_db()
+    random.seed(42)
 
     with Session(engine) as session:
         for data in USERS:
@@ -144,6 +147,7 @@ def main() -> None:
                 User(
                     **data,
                     photo_url=None,
+                    rating=random.randint(0, 100),
                     is_admin=False,
                     hashed_password=get_password_hash(username.title() + "1!@"),
                 )
