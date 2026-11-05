@@ -171,7 +171,7 @@ async function submitAuthForm(form) {
         const data = await response.json().catch(() => { });
 
         if (!response.ok) {
-            setFeedback(form, "username", data.message || "Не удалось выполнить запрос. Попробуйте еще раз");
+            setFeedback(form, "username", data.detail || "Не удалось выполнить запрос. Попробуйте еще раз");
             return;
         }
 
@@ -261,10 +261,10 @@ async function setupProfileForm(form) {
 
             if (!response.ok) {
                 if ([413, 415].includes(response.status)) {
-                    setFeedback(form, "photo", data["detail"]);
+                    setFeedback(form, "photo", data.detail);
                 }
                 errorAlert.classList.remove("d-none");
-                errorAlert.querySelector("#message").textContent = data["detail"] || "Что-то пошло не так, попробуйте еще раз";
+                errorAlert.querySelector("#message").textContent = data.detail || "Что-то пошло не так, попробуйте еще раз";
                 return;
             }
 

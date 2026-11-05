@@ -88,7 +88,7 @@ class UserFilter(BaseModel):
 
     @field_validator(*user_filter_fields, mode="before")
     @classmethod
-    def validate_course(cls, value):
+    def empty_to_none(cls, value):
         return value if value != "" else None
 
 

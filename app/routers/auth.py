@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Form, Request, status
+from fastapi import APIRouter, Form, HTTPException, Request, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import select
@@ -27,13 +27,11 @@ def register(
     user: Annotated[UserCreate, Form()],
     session: SessionDep,
 ):
-    db_user = session.exec(
-        select(User).where(User.username == user.username)
-    ).first()
+    db_user = session.exec(select(User).where(User.username == user.username)).first()
     if db_user is not None:
-        return JSONResponse(
-            {"message": "Пользователь с таким именем уже существует"},
+        raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
+            detail="Пользователь с таким именем уже существует",
         )
 
     new_user = User(
@@ -46,9 +44,7 @@ def register(
     if new_user.id is None:
         raise RuntimeError("Created user has no id")
 
-    response = JSONResponse(
-        {"redirect": "/profile/edit"}, status_code=status.HTTP_201_CREATED
-    )
+    response = JSONResponse({"redirect": "/profile/edit"}, status_code=status.HTTP_201_CREATED)
     create_session_cookie(response, new_user.id, persistent=False)
     return response
 
@@ -67,24 +63,18 @@ def login(
     session: SessionDep,
 ):
 
-    db_user = session.exec(
-        select(User).where(User.username == data.username)
-    ).first()
+    db_user = session.exec(select(User).where(User.username == data.username)).first()
 
-    if db_user is None or not verify_password(
-        data.password, db_user.hashed_password
-    ):
-        return JSONResponse(
-            {"message": "Неверное имя пользователя или пароль"},
+    if db_user is None or not verify_password(data.password, db_user.hashed_password):
+        raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Неверное имя пользователя или пароль",
         )
 
     if db_user.id is None:
         raise RuntimeError("Existing user has no id")
     response = JSONResponse({"redirect": "/"})
-    create_session_cookie(
-        response, db_user.id, persistent=data.remember_me
-    )
+    create_session_cookie(response, db_user.id, persistent=data.remember_me)
     return response
 
 

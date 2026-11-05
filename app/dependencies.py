@@ -38,9 +38,9 @@ def get_required_user(user: OptionalUserDep) -> UserRead:
 RequiredUserDep = Annotated[UserRead, Depends(get_required_user)]
 
 
-def get_admin(user: RequiredUserDep) -> UserRead:
-    if not user.is_admin:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Нет доступа")
+def get_admin(user: OptionalUserDep) -> UserRead:
+    if user is None or not user.is_admin:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Страница не найдена")
     return user
 
 
