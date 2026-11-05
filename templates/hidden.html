@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Главная{% endblock title %}
+{% block content %}
+    <div class="container bg-body p-4">
+        <div class="row g-4 px-4 py-3">
+            {% for profile in users %}
+                <div class="col-6">
+                    <article class="card h-100">
+                        <div class="card-body d-flex gap-3">
+                            <img src="{{ profile.photo_url or url_for('static', path='/default_icon.png') }}"
+                                 alt="Фото профиля"
+                                 class="profile-image rounded-circle border border-2 border-secondary-subtle flex-shrink-0">
+                            <div>
+                                <div class="mb-2">
+                                    {% if profile.is_hidden %}
+                                        <span class="badge text-bg-warning">Скрытый</span>
+                                    {% else %}
+                                    {% endif %}
+                                    {% if profile.education_type %}
+                                        <span class="badge text-bg-primary">{{ profile.education_type }}</span>
+                                    {% endif %}
+                                    {% if profile.faculty %}
+                                        <span class="badge text-bg-success">{{ profile.faculty }}</span>
+                                    {% endif %}
+                                    {% if profile.course %}
+                                        <span class="badge text-bg-secondary">{{ profile.course }} курс</span>
+                                    {% endif %}
+                                </div>
+                                <h2 class="h5 mb-1">{{ profile.full_name or profile.username }}</h2>
+                                <div class="text-body-secondary mb-2">@{{ profile.username }}</div>
+                                <p class="mb-3">{{ profile.bio or "Нет данных о себе." }}</p>
+                                <div class="small text-body-secondary">
+                                    {% if profile.email %}
+                                        <div><i class="bi bi-envelope"></i> {{ profile.email }}</div>
+                                    {% endif %}
+                                    {% if profile.phone_number %}
+                                        <div><i class="bi bi-telephone"></i> {{ profile.phone_number }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-secondary mb-0" role="status">Пользователи не найдены.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

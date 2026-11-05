@@ -31,14 +31,20 @@ OptionalUserDep = Annotated[UserRead | None, Depends(get_current_user)]
 
 def get_required_user(user: OptionalUserDep) -> UserRead:
     if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Не авторизирован")
     return user
 
 
 RequiredUserDep = Annotated[UserRead, Depends(get_required_user)]
 
 
-# Можно сделать зависимость для админа
+def get_admin(user: RequiredUserDep) -> UserRead:
+    if not user.is_admin:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Нет доступа")
+    return user
+
+
+AdminDep = Annotated[UserRead, Depends(get_admin)]
 
 
 def get_user_update(
