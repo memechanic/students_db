@@ -7,7 +7,7 @@ from sqlmodel import select
 
 from app.avatar import delete_avatar, save_avatar
 from app.dependencies import OptionalUserDep, RequiredUserDep, SessionDep, UserUpdateDep
-from app.models import EducationType, Faculty, User, UserFilter
+from app.models import EducationType, Faculty, User, UserFilter, UserRead
 
 router = APIRouter()
 
@@ -35,7 +35,8 @@ def index(
         else:
             conditions.append(column == value)
 
-    users = session.exec(select(User).where(*conditions)).all()
+    stmt = select(User).where(*conditions)
+    users = [UserRead.model_validate(u) for u in session.exec(stmt).all()]
 
     return templates.TemplateResponse(request, "index.html", context={"user": user, "users": users})
 
