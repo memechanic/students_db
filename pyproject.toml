@@ -20,5 +20,9 @@ entrypoint = "main:app"
 [tool.ruff]
 line-length = 100
 
+[tool.djlint]
+ignore = "H021"
+quote_style = "single"
+
 [dependency-groups]
 dev = ["djlint>=1.46.4", "ruff>=0.16.9"]
