@@ -109,14 +109,16 @@
                                 <h2 class="h5 mb-1">{{ profile.full_name or profile.username }}</h2>
                                 <div class="text-body-secondary mb-2">@{{ profile.username }}</div>
                                 <p class="mb-3">{{ profile.bio or "Нет данных о себе." }}</p>
-                                <div class="small text-body-secondary">
-                                    {% if profile.email %}
-                                        <div><i class="bi bi-envelope"></i> {{ profile.email }}</div>
-                                    {% endif %}
-                                    {% if profile.phone_number %}
-                                        <div><i class="bi bi-telephone"></i> {{ profile.phone_number }}</div>
-                                    {% endif %}
-                                </div>
+                                {% if user %}
+                                    <div class="small text-body-secondary">
+                                        {% if profile.email %}
+                                            <div><i class="bi bi-envelope"></i> {{ profile.email }}</div>
+                                        {% endif %}
+                                        {% if profile.phone_number %}
+                                            <div><i class="bi bi-telephone"></i> {{ profile.phone_number }}</div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </article>
