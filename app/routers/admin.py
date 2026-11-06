@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from sqlmodel import col, select
 
-from app.dependencies import AdminDep, SessionDep
+from app.dependencies import AdminDep, SessionDep, profile_completeness
 from app.models import User, UserRead
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -24,10 +24,18 @@ def rating_page(
     request: Request,
     user: AdminDep,
     session: SessionDep,
+    descending: bool = True,
 ):
-    smtm = select(User).order_by(
-        col(User.rating).desc(),
-        col(User.username),
-    )
+    smtm = select(User).order_by(col(User.username))
     users = [UserRead.model_validate(u) for u in session.exec(smtm).all()]
-    return templates.TemplateResponse(request, "rating.html", {"user": user, "users": users})
+
+    rows = [
+        {
+            "user": u,
+            "rating": profile_completeness(u),
+        }
+        for u in users
+    ]
+    rows.sort(key=lambda r: r["rating"], reverse=descending)
+
+    return templates.TemplateResponse(request, "rating.html", {"user": user, "rows": rows})

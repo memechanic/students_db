@@ -48,12 +48,12 @@ AdminDep = Annotated[UserRead, Depends(get_admin)]
 
 
 def get_user_update(
-    full_name: Annotated[str, Form()],
-    email: Annotated[str, Form()],
-    phone_number: Annotated[str, Form()],
-    course: Annotated[int, Form()],
-    faculty: Annotated[Faculty, Form()],
-    education_type: Annotated[EducationType, Form()],
+    full_name: Annotated[str | None, Form()] = None,
+    email: Annotated[str | None, Form()] = None,
+    phone_number: Annotated[str | None, Form()] = None,
+    course: Annotated[int | None, Form()] = None,
+    faculty: Annotated[Faculty | None, Form()] = None,
+    education_type: Annotated[EducationType | None, Form()] = None,
     bio: Annotated[str | None, Form()] = None,
 ) -> UserUpdate:
     return UserUpdate(
@@ -68,3 +68,25 @@ def get_user_update(
 
 
 UserUpdateDep = Annotated[UserUpdate, Depends(get_user_update)]
+
+
+COUNTABLE_FIELDS = [
+    "full_name",
+    "email",
+    "phone_number",
+    "photo_url",
+    "course",
+    "faculty",
+    "education_type",
+]
+
+
+def profile_completeness(user: UserRead) -> int:
+    base_rating = sum(10 for f in COUNTABLE_FIELDS if getattr(user, f) is not None)
+
+    if user.bio is None:
+        bonus_rating = 0
+    else:
+        bonus_rating = len(user.bio) * 30 // 500
+
+    return base_rating + bonus_rating

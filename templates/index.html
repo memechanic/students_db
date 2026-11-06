@@ -108,7 +108,7 @@
                                 </div>
                                 <h2 class="h5 mb-1">{{ profile.full_name or profile.username }}</h2>
                                 <div class="text-body-secondary mb-2">@{{ profile.username }}</div>
-                                <p class="mb-3">{{ profile.bio or "Нет данных о себе." }}</p>
+                                <p class="mb-3 clamp-2">{{ profile.bio or "Нет данных о себе." }}</p>
                                 {% if user %}
                                     <div class="small text-body-secondary">
                                         {% if profile.email %}

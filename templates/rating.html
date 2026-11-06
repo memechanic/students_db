@@ -1,26 +1,131 @@
-{% extends 'base.html' %}
+{# {% extends 'base.html' %}
 {% block title %}Рейтинг{% endblock title %}
 {% block content %}
     <div class="container bg-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">Рейтинг</h3>
+            <form method="get" action="{{ url_for('rating_page') }}">
+                <select class="form-select"
+                        name="descending"
+                        id="descending"
+                        onchange="this.form.submit()">
+                    <option value="true"
+                            {% if request.query_params.get('descending', 'true') == 'true' %}selected{% endif %}>
+                        По убыванию
+                    </option>
+                    <option value="false"
+                            {% if request.query_params.get('descending', 'true') == 'false' %}selected{% endif %}>
+                        По возрастанию
+                    </option>
+                </select>
+            </form>
+        </div>
         <div class="row">
-            <table class="table table-bordered">
+            <table class="table table-hover table-striped">
                 <thead>
                     <tr class="table-primary">
-                        <th>#</th>
+                        <th class="col-number">#</th>
                         <th>Пользователь</th>
                         <th>Рейтинг</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for u in users %}
-                        <tr>
-                            <td>{{ loop.index }}</td>
-                            <td>{{ u.username }}</td>
-                            <td>{{ u.rating }}</td>
+                    {% if request.query_params.get('descending', 'true') == 'true' %}
+                        {% set color = 'table-success' %}
+                    {% else %}
+                        {% set color = 'table-danger' %}
+                    {% endif %}
+                    {% for r in rows %}
+                        {% set place = loop.index %}
+                        <tr class="{{ color if place <= 3 else '' }}">
+                            <td class="col-number">{{ loop.index }}</td>
+                            <td>{{ r.user.full_name or r.user.username }}</td>
+                            <td>{{ r.rating }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+    </div>
+{% endblock content %} #}
+{% extends 'base.html' %}
+{% block title %}Рейтинг{% endblock title %}
+{% block content %}
+    <div class="container bg-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="mb-0">Рейтинг</h3>
+                <p class="text-body-secondary small mb-0">по заполненности профиля</p>
+            </div>
+            <form method="get" action="{{ url_for('rating_page') }}">
+                <select class="form-select" name="descending" onchange="this.form.submit()">
+                    <option value="true"
+                            {% if request.query_params.get('descending', 'true') == 'true' %}selected{% endif %}>
+                        По убыванию
+                    </option>
+                    <option value="false"
+                            {% if request.query_params.get('descending', 'true') == 'false' %}selected{% endif %}>
+                        По возрастанию
+                    </option>
+                </select>
+            </form>
+        </div>
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr class="table-dark">
+                    <th scope="col" class="col-small text-center">#</th>
+                    <th scope="col" class="col-small">Фото</th>
+                    <th scope="col">Пользователь</th>
+                    <th scope="col">Факультет</th>
+                    <th scope="col" class="col-rating">Рейтинг</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                    {% set place = loop.index %}
+                    {% set medal = '🥇', '🥈', '🥉' %}
+                    <tr class="{% if place == 1 %}table-warning{% elif place == 2 %}table-secondary{% elif place == 3 %}table-info{% endif %}">
+                        <th scope="row" class="text-center fs-5">
+                            {% if place <= 3 %}
+                                {{ medal[place - 1] }}
+                            {% else %}
+                                {{ place }}
+                            {% endif %}
+                        </th>
+                        <td>
+                            <img src="{{ r.user.photo_url or url_for('static', path='/default_icon.png') }}"
+                                 alt=""
+                                 class="rounded-circle border object-fit"
+                                 width="40"
+                                 height="40">
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ r.user.full_name or r.user.username }}</div>
+                            <div class="text-body-secondary small">@{{ r.user.username }}</div>
+                        </td>
+                        <td>
+                            {% if r.user.faculty %}
+                                <span class="badge text-bg-success">{{ r.user.faculty }}</span>
+                            {% else %}
+                                <span class="text-body-secondary">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1 h-8">
+                                    <div class="progress-bar {% if r.rating < 40 %}bg-danger {% elif r.rating < 70 %}bg-warning {% else %}bg-success{% endif %}"
+                                         style="width: {{ r.rating }}%"></div>
+                                </div>
+                                <span class="percent-badge badge {% if r.rating < 40 %}bg-danger {% elif r.rating < 70 %}bg-warning text-dark {% else %}bg-success{% endif %}">{{ r.rating }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-body-secondary py-4">Пользователей нет.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock content %}

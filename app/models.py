@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, SecretStr, field_validator
+from pydantic import BaseModel, SecretStr, field_validator, model_validator
 from sqlmodel import Field, SQLModel
 
 
@@ -36,8 +36,6 @@ class UserBase(SQLModel):
     faculty: Faculty | None = Field(default=None)
     education_type: EducationType | None = Field(default=None)
 
-    rating: int = Field(default=0, ge=0)
-
     photo_url: str | None = Field(default=None, max_length=500)
     is_hidden: bool = Field(default=False)
 
@@ -54,14 +52,21 @@ class UserCreate(SQLModel):
 
 
 class UserUpdate(SQLModel):
-    full_name: str = Field(max_length=100)
-    email: str = Field(max_length=100)
-    phone_number: str = Field(max_length=20)
+    full_name: str | None = Field(max_length=100)
+    email: str | None = Field(max_length=100)
+    phone_number: str | None = Field(max_length=20)
     bio: str | None = Field(default=None, max_length=500)
 
-    course: int = Field(ge=1, le=6)
-    faculty: Faculty
-    education_type: EducationType
+    course: int | None = Field(ge=1, le=6)
+    faculty: Faculty | None
+    education_type: EducationType | None
+
+    @model_validator(mode="before")
+    @classmethod
+    def empty_to_none(cls, data):
+        if isinstance(data, dict):
+            return {k: (None if v == "" else v) for k, v in data.items()}
+        return data
 
 
 user_filter_fields = [
