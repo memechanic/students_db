@@ -1,7 +1,8 @@
+from datetime import datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, SecretStr, field_validator, model_validator
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class EducationType(StrEnum):
@@ -110,3 +111,16 @@ class User(UserBase, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
+    logs: list["LogEntry"] = Relationship(back_populates="user")
+
+
+class LogEntry(SQLModel, table=True):
+    __tablename__ = "logs"  # type: ignore
+
+    id: int | None = Field(default=None, primary_key=True)
+    created_at: datetime
+    user_id: int | None = Field(default=None, foreign_key="users.id")
+    user: User | None = Relationship(back_populates="logs")
+    action: str | None = Field(default=None, max_length=200)
+    path: str | None = Field(default=None, max_length=200)
+    status_code: int | None = Field(default=None)

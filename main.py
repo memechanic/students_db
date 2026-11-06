@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.database import engine, init_db
+from app.log import log_requests
 from app.routers import admin, auth, pages
 
 
@@ -17,6 +18,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+app.middleware("http")(log_requests)
+
 
 app.include_router(auth.router)
 app.include_router(pages.router)

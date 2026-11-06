@@ -46,3 +46,25 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+.logs-date {
+    width: 20%;
+}
+
+.logs-user {
+    width: 25%;
+}
+
+.logs-action {
+    width: 35%;
+}
+
+.logs-path {
+    width: 12%;
+    text-align: center;
+}
+
+.logs-status {
+    width: 8%;
+    text-align: center;
+}

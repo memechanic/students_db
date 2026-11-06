@@ -23,6 +23,8 @@ def get_current_user(
     if user is None:
         return None
 
+    request.state.user_id = user.id
+
     return UserRead.model_validate(user)
 
 

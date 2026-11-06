@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Логи действий{% endblock title %}
+{% block content %}
+    <div class="container bg-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">Логи действий</h3>
+            <form action="{{ url_for('download_logs') }}">
+                <button class="form-control btn btn-primary" type="submit">Скачать логи</button>
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr class="table-dark">
+                        <th class="logs-date">Дата и время</th>
+                        <th class="logs-user">Пользователь</th>
+                        <th class="logs-action">Действие</th>
+                        <th class="logs-path">Путь</th>
+                        <th class="logs-status">Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                        {% set color = 'text-success' if log.status_code < 300
+                            else 'text-info' if log.status_code < 400
+                            else 'text-danger' if log.status_code < 500
+                        else 'text-dark' %}
+                        <tr>
+                            <td class="logs-date">{{ log.created_at.strftime('%d.%m.%Y %H:%M:%S') }}</td>
+                            <td class="logs-user">{{ log.user.username if log.user else "Анонимный пользователь" }}</td>
+                            <td class="logs-action">{{ log.action or "—" }}</td>
+                            <td class="logs-path"><code>{{ log.path or "—" }}</code></td>
+                            <td class="logs-status {{ color }}"><strong>{{ log.status_code or "—" }}</strong></td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-body-secondary py-4">Логи отсутствуют.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}
